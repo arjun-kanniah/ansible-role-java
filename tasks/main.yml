@@ -3,6 +3,10 @@
   include_vars: "{{ ansible_distribution }}.yml"
   when: ansible_distribution == 'FreeBSD' or ansible_distribution == 'Fedora'
 
+- name: Include OS-specific variables for Amazon.
+  include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_version}}.yml"
+  when: ansible_distribution == 'Amazon'
+
 - name: Include version-specific variables for CentOS/RHEL.
   include_vars: "RedHat-{{ ansible_distribution_version.split('.')[0] }}.yml"
   when: >-
@@ -10,6 +14,7 @@
       'CentOS',
       'Red Hat Enterprise Linux',
       'RedHat',
+      'OracleLinux',
       'Rocky',
       'AlmaLinux'
     ]
@@ -30,6 +35,9 @@
 # Setup/install tasks.
 - include_tasks: setup-RedHat.yml
   when: ansible_os_family == 'RedHat'
+
+- include_tasks: setup-Amazon.yml
+  when: ansible_distribution == 'Amazon'
 
 - include_tasks: setup-Debian.yml
   when: ansible_os_family == 'Debian'
